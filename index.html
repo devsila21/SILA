@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SILA TECH | VCF Collector</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -25,8 +24,11 @@
             --text-secondary: #8892b0;
             --success: #00ff88;
             --warning: #ffcc00;
+            --danger: #ff4444;
+            --premium: #ffd700;
             --gradient: linear-gradient(135deg, #0066ff 0%, #00d4ff 100%);
             --gradient-dark: linear-gradient(135deg, #000814 0%, #0a192f 100%);
+            --gradient-premium: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
         }
         
         body {
@@ -87,6 +89,27 @@
             50% { transform: translate(0, 40px) rotate(180deg); }
             75% { transform: translate(-20px, 20px) rotate(270deg); }
             100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        /* Premium Badge */
+        .premium-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--gradient-premium);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: #000;
+            font-weight: 800;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+            animation: pulse-premium 2s infinite;
+        }
+        
+        @keyframes pulse-premium {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
         /* Glitch Effect */
@@ -458,6 +481,47 @@
             margin-bottom: 30px;
         }
         
+        /* Premium Features */
+        .premium-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .premium-card {
+            background: rgba(17, 34, 64, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid var(--premium);
+            transition: all 0.3s ease;
+        }
+        
+        .premium-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+        }
+        
+        .premium-icon {
+            font-size: 2.5rem;
+            color: var(--premium);
+            margin-bottom: 20px;
+        }
+        
+        .premium-title {
+            color: var(--premium);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .premium-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
         /* Download Section */
         .download-section {
             text-align: center;
@@ -617,6 +681,20 @@
             color: var(--text);
         }
         
+        /* Live Visitors Counter */
+        .live-visitors {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .live-visitors i {
+            color: var(--success);
+            margin-right: 10px;
+        }
+        
         /* Loading Spinner */
         .loading-spinner {
             display: inline-block;
@@ -679,10 +757,16 @@
             .form-container, .progress-container { padding: 25px; }
             .whatsapp-links { grid-template-columns: 1fr; }
             .stats-container { grid-template-columns: repeat(2, 1fr); }
+            .premium-features { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+    <!-- Premium Badge -->
+    <div class="premium-badge">
+        <i class="fas fa-crown"></i> PREMIUM
+    </div>
+
     <!-- Animated Background -->
     <div class="bg-elements">
         <div class="circle"></div>
@@ -691,13 +775,18 @@
     </div>
     
     <div class="container">
+        <!-- Live Visitors -->
+        <div class="live-visitors">
+            <i class="fas fa-eye"></i> <span id="live-count">127</span> online now
+        </div>
+
         <!-- Header -->
         <header class="header">
             <div class="logo glitch">
                 <i class="fas fa-address-card"></i>
             </div>
-            <h1 class="title">VCF COLLECTOR</h1>
-            <p class="subtitle">Join 200 contacts to unlock exclusive VCF file</p>
+            <h1 class="title">VCF COLLECTOR PREMIUM</h1>
+            <p class="subtitle" id="target-description">Join <span id="target-display">200</span> contacts to unlock exclusive VCF file</p>
         </header>
         
         <!-- Stats -->
@@ -707,7 +796,7 @@
                 <span class="stat-label">Joined</span>
             </div>
             <div class="stat-card">
-                <span class="stat-number">200</span>
+                <span class="stat-number" id="target-count">200</span>
                 <span class="stat-label">Target</span>
             </div>
             <div class="stat-card">
@@ -717,6 +806,31 @@
             <div class="stat-card">
                 <span class="stat-number" id="progress-percent">0%</span>
                 <span class="stat-label">Progress</span>
+            </div>
+        </div>
+        
+        <!-- Premium Features -->
+        <div class="premium-features">
+            <div class="premium-card">
+                <div class="premium-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="premium-title">INSTANT VCF</div>
+                <div class="premium-text">Generate immediately after target</div>
+            </div>
+            <div class="premium-card">
+                <div class="premium-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="premium-title">SECURE DATA</div>
+                <div class="premium-text">Encrypted storage</div>
+            </div>
+            <div class="premium-card">
+                <div class="premium-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="premium-title">LIVE STATS</div>
+                <div class="premium-text">Real-time updates</div>
             </div>
         </div>
         
@@ -779,12 +893,12 @@
                 
                 <div class="progress-info">
                     <span>START</span>
-                    <span>TARGET: 200</span>
+                    <span id="target-progress">TARGET: 200</span>
                 </div>
                 
                 <div class="status-boost">
                     <h3 class="status-title"><i class="fas fa-fire"></i> BOOST STATUS VIEWS</h3>
-                    <p>Increase your WhatsApp visibility</p>
+                    <p>Increase your WhatsApp visibility by 300%</p>
                 </div>
             </div>
         </div>
@@ -796,8 +910,8 @@
                     <i class="fab fa-whatsapp"></i>
                 </div>
                 <h3>JOIN GROUP</h3>
-                <p>Connect with community</p>
-                <a href="https://chat.whatsapp.com/Be9v56VJm8kJLrJfuzvWL0" target="_blank" class="whatsapp-btn">
+                <p id="group-description">Connect with community</p>
+                <a href="#" target="_blank" class="whatsapp-btn" id="group-link">
                     <i class="fas fa-user-plus"></i> JOIN NOW
                 </a>
             </div>
@@ -807,8 +921,8 @@
                     <i class="fab fa-whatsapp"></i>
                 </div>
                 <h3>FOLLOW CHANNEL</h3>
-                <p>Get latest updates</p>
-                <a href="https://whatsapp.com/channel/0029VbBG4gfISTkCpKxyMH02" target="_blank" class="whatsapp-btn">
+                <p id="channel-description">Get latest updates</p>
+                <a href="#" target="_blank" class="whatsapp-btn" id="channel-link">
                     <i class="fas fa-bell"></i> FOLLOW NOW
                 </a>
             </div>
@@ -825,7 +939,7 @@
         
         <!-- Footer -->
         <footer class="footer">
-            <p>Created by <span class="tech-name">SILA TECH</span></p>
+            <p>Created by <span class="tech-name">SILA TECH PREMIUM</span></p>
         </footer>
     </div>
     
@@ -839,10 +953,10 @@
         <p>You've joined successfully!</p>
         
         <div style="margin: 25px 0;">
-            <a href="https://chat.whatsapp.com/Be9v56VJm8kJLrJfuzvWL0" target="_blank" class="whatsapp-btn" style="margin: 10px;">
+            <a href="#" target="_blank" class="whatsapp-btn" id="success-group-link" style="margin: 10px;">
                 <i class="fab fa-whatsapp"></i> JOIN GROUP
             </a>
-            <a href="https://whatsapp.com/channel/0029VbBG4gfISTkCpKxyMH02" target="_blank" class="whatsapp-btn" style="margin: 10px;">
+            <a href="#" target="_blank" class="whatsapp-btn" id="success-channel-link" style="margin: 10px;">
                 <i class="fab fa-whatsapp"></i> FOLLOW CHANNEL
             </a>
         </div>
@@ -851,13 +965,6 @@
     </div>
 
     <script>
-        // Supabase configuration
-        const SUPABASE_URL = 'https://blhqirndorouhetyyzzp.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_F_lLs_Gt_hkDUteZspo82A_irUETSOb';
-        
-        // Initialize Supabase client
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
         const MAX_CONTACTS = 200;
         
         // DOM elements
@@ -881,24 +988,48 @@
         const removePhotoBtn = document.getElementById('remove-photo');
         
         // Initialize
+        loadSettings();
         loadContactsFromDatabase();
+        updateLiveVisitors();
         
-        // Load contacts from Supabase
+        // Load settings from database
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/settings');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const settings = result.data;
+                    
+                    // Update target
+                    document.getElementById('target-count').textContent = settings.target;
+                    document.getElementById('target-display').textContent = settings.target;
+                    document.getElementById('target-progress').textContent = `TARGET: ${settings.target}`;
+                    
+                    // Update WhatsApp links
+                    document.getElementById('group-link').href = settings.group_link;
+                    document.getElementById('channel-link').href = settings.channel_link;
+                    document.getElementById('success-group-link').href = settings.group_link;
+                    document.getElementById('success-channel-link').href = settings.channel_link;
+                    
+                    // Update descriptions
+                    document.getElementById('group-description').textContent = settings.group_description || 'Connect with community';
+                    document.getElementById('channel-description').textContent = settings.channel_description || 'Get latest updates';
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+        
+        // Load contacts from database
         async function loadContactsFromDatabase() {
             try {
-                const { data, error } = await supabase
-                    .from('contacts')
-                    .select('*')
-                    .order('created_at', { ascending: true });
+                const response = await fetch('/api/contacts');
+                const result = await response.json();
                 
-                if (error) throw error;
-                
-                window.contacts = data || [];
-                updateContactStats();
-                
-                // Check if target reached
-                if (window.contacts.length >= MAX_CONTACTS) {
-                    downloadSection.style.display = 'block';
+                if (result.success) {
+                    window.contacts = result.data;
+                    updateContactStats();
                 }
             } catch (error) {
                 console.error('Error loading contacts:', error);
@@ -909,20 +1040,21 @@
         
         // Update contact statistics
         function updateContactStats() {
+            const target = parseInt(document.getElementById('target-count').textContent) || MAX_CONTACTS;
             const count = window.contacts?.length || 0;
-            const remaining = MAX_CONTACTS - count;
-            const percent = Math.round((count / MAX_CONTACTS) * 100);
+            const remaining = target - count;
+            const percent = Math.round((count / target) * 100);
             
             contactsCount.textContent = count;
             remainingCount.textContent = remaining;
-            progressCount.textContent = `${count}/200`;
+            progressCount.textContent = `${count}/${target}`;
             progressPercent.textContent = `${percent}%`;
             
             // Update progress bar
             progressFill.style.width = `${percent}%`;
             
             // Show download section if target reached
-            if (count >= MAX_CONTACTS) {
+            if (count >= target) {
                 downloadSection.style.display = 'block';
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-ban"></i> MAXIMUM REACHED';
@@ -933,18 +1065,31 @@
             }
         }
         
+        // Update live visitors count
+        function updateLiveVisitors() {
+            setInterval(async () => {
+                try {
+                    const response = await fetch('/api/visitors');
+                    const result = await response.json();
+                    if (result.success) {
+                        document.getElementById('live-count').textContent = result.count;
+                    }
+                } catch (error) {
+                    console.error('Error updating visitors:', error);
+                }
+            }, 10000);
+        }
+        
         // Handle image preview
         photoInput.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
-                // Check file size (max 2MB)
                 if (file.size > 2 * 1024 * 1024) {
                     alert('Image size should be less than 2MB');
                     this.value = '';
                     return;
                 }
                 
-                // Check file type
                 if (!file.type.match('image.*')) {
                     alert('Please select an image file');
                     this.value = '';
@@ -960,7 +1105,7 @@
                 }
                 
                 reader.onerror = function() {
-                    alert('Error reading image file. Please try another image.');
+                    alert('Error reading image file');
                     photoInput.value = '';
                     previewContainer.style.display = 'none';
                     fileLabel.innerHTML = 'Upload photo <i class="fas fa-camera"></i>';
@@ -993,26 +1138,17 @@
             const phone = document.getElementById('phone').value.trim();
             const photoFile = photoInput.files[0];
             
-            // Validate inputs
             if (!name || !phone) {
                 alert('Please fill in all required fields');
                 return;
             }
             
-            // Check if we've reached the maximum
-            if (window.contacts?.length >= MAX_CONTACTS) {
-                alert('Maximum of 200 contacts reached. Please download the VCF file.');
+            const target = parseInt(document.getElementById('target-count').textContent);
+            if (window.contacts?.length >= target) {
+                alert('Maximum contacts reached. Please download the VCF file.');
                 return;
             }
             
-            // Check if phone number already exists
-            const phoneExists = window.contacts?.some(c => c.phone === phone);
-            if (phoneExists) {
-                alert('This phone number has already been registered!');
-                return;
-            }
-            
-            // Disable submit button and show loading
             submitBtn.disabled = true;
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<span class="loading-spinner"></span> SUBMITTING...';
@@ -1020,7 +1156,6 @@
             try {
                 let photoBase64 = '';
                 
-                // Process the photo if provided
                 if (photoFile) {
                     photoBase64 = await new Promise((resolve, reject) => {
                         const reader = new FileReader();
@@ -1030,53 +1165,39 @@
                     });
                 }
                 
-                // Save to Supabase
-                const { data, error } = await supabase
-                    .from('contacts')
-                    .insert([
-                        {
-                            name: name,
-                            phone: phone,
-                            photo: photoBase64,
-                            created_at: new Date().toISOString()
-                        }
-                    ])
-                    .select();
+                const response = await fetch('/api/contacts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, phone, photo: photoBase64 })
+                });
                 
-                if (error) throw error;
+                const result = await response.json();
                 
-                // Reload contacts from database
-                await loadContactsFromDatabase();
-                
-                // Show success message
-                successMessage.classList.add('show');
-                
-                // Reset form
-                contactForm.reset();
-                previewContainer.style.display = 'none';
-                fileLabel.innerHTML = 'Upload photo <i class="fas fa-camera"></i>';
-                
+                if (result.success) {
+                    await loadContactsFromDatabase();
+                    successMessage.classList.add('show');
+                    contactForm.reset();
+                    previewContainer.style.display = 'none';
+                    fileLabel.innerHTML = 'Upload photo <i class="fas fa-camera"></i>';
+                } else {
+                    alert(result.error || 'Error saving contact');
+                }
             } catch (error) {
-                console.error('Error saving contact:', error);
+                console.error('Error:', error);
                 alert('Error saving contact. Please try again.');
             } finally {
-                // Re-enable submit button
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
             }
         });
         
         // Close success message
-        closeSuccess.addEventListener('click', function() {
-            successMessage.classList.remove('show');
-        });
+        closeSuccess.addEventListener('click', () => successMessage.classList.remove('show'));
+        closeSuccessBtn.addEventListener('click', () => successMessage.classList.remove('show'));
         
-        closeSuccessBtn.addEventListener('click', function() {
-            successMessage.classList.remove('show');
-        });
-        
-        // Close success message when clicking outside
-        successMessage.addEventListener('click', function(e) {
+        successMessage.addEventListener('click', (e) => {
             if (e.target === successMessage) {
                 successMessage.classList.remove('show');
             }
@@ -1084,44 +1205,30 @@
         
         // Generate and download VCF file
         downloadBtn.addEventListener('click', async function() {
-            await generateAndDownloadVCF();
-        });
-        
-        // Generate VCF file content from database
-        async function generateAndDownloadVCF() {
             try {
-                // Show loading on button
                 const originalText = downloadBtn.innerHTML;
                 downloadBtn.innerHTML = '<span class="loading-spinner"></span> GENERATING...';
                 downloadBtn.disabled = true;
                 
-                // Fetch latest contacts from database
-                const { data, error } = await supabase
-                    .from('contacts')
-                    .select('*')
-                    .order('created_at', { ascending: true });
+                const response = await fetch('/api/contacts');
+                const result = await response.json();
                 
-                if (error) throw error;
-                
-                if (!data || data.length === 0) {
+                if (!result.success || !result.data || result.data.length === 0) {
                     alert('No contacts found!');
                     return;
                 }
                 
                 let vcfContent = '';
                 
-                // Add each contact to the VCF content
-                data.forEach(contact => {
+                result.data.forEach(contact => {
                     vcfContent += `BEGIN:VCARD
 VERSION:3.0
 FN:🐢SILA🇹🇿 ${contact.name}
 TEL:${contact.phone}
 `;
                     
-                    // Add photo if available
                     if (contact.photo) {
                         try {
-                            // Extract base64 data without the data URL prefix if present
                             const base64Data = contact.photo.includes(',') ? contact.photo.split(',')[1] : contact.photo;
                             vcfContent += `PHOTO;ENCODING=b;TYPE=JPEG:${base64Data}
 `;
@@ -1135,7 +1242,6 @@ END:VCARD
 `;
                 });
                 
-                // Create download link
                 const blob = new Blob([vcfContent], { type: 'text/vcard' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1150,20 +1256,10 @@ END:VCARD
                 console.error('Error generating VCF:', error);
                 alert('Error generating VCF file. Please try again.');
             } finally {
-                // Reset button
                 downloadBtn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD VCF';
                 downloadBtn.disabled = false;
             }
-        }
-        
-        // Add glitch effect to title randomly
-        setInterval(() => {
-            const title = document.querySelector('.title');
-            title.classList.add('glitch');
-            setTimeout(() => {
-                title.classList.remove('glitch');
-            }, 300);
-        }, 5000);
+        });
         
         // Auto-refresh stats every 30 seconds
         setInterval(loadContactsFromDatabase, 30000);
